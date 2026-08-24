@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>勇者之章 Ⅲ · 流程攻略导航</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f1419;
+      color: #e8edf4;
+      padding: 24px;
+    }
+    .hub { max-width: 520px; width: 100%; text-align: center; }
+    h1 { font-size: 1.6rem; margin-bottom: 8px; }
+    p { color: #8b9cb3; margin-bottom: 32px; font-size: 0.95rem; }
+    .cards { display: flex; flex-direction: column; gap: 14px; }
+    a.card {
+      display: block;
+      padding: 20px 24px;
+      border-radius: 14px;
+      border: 1px solid #2d3f56;
+      background: #1a2332;
+      color: inherit;
+      text-decoration: none;
+      text-align: left;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    a.card:hover { transform: translateY(-2px); border-color: #f0b429; }
+    a.card.warrior:hover { border-color: #ef6b6b; }
+    a.card.mage:hover { border-color: #b07cff; }
+    .card h2 { font-size: 1.1rem; margin-bottom: 6px; }
+    .card span { font-size: 0.85rem; color: #8b9cb3; }
+  </style>
+</head>
+<body>
+  <div class="hub">
+    <h1>勇者之章 Ⅲ · 流程攻略</h1>
+    <p>可视化装备流程 · 点击卡片进入对应路线</p>
+    <div class="cards">
+      <a class="card" href="dragon/index.html">
+        <h2>无赎弓线</h2>
+        <span>龙前 + 龙后 · 3.11.2 / 3.9.9 攻略</span>
+      </a>
+      <a class="card warrior" href="warrior/index.html">
+        <h2>勇者战线</h2>
+        <span>龙前 + 龙后 · 3.13.8 底层逻辑攻略</span>
+      </a>
+      <a class="card mage" href="mage/index.html">
+        <h2>无赎聚晶法</h2>
+        <span>龙前 + 龙后 · 3.9.9 聚晶法攻略</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

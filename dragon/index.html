@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>无赎弓流程 · 龙前装备攻略</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface-hover: #243044;
+      --border: #2d3f56;
+      --text: #e8edf4;
+      --muted: #8b9cb3;
+      --accent: #f0b429;
+      --accent-dim: #c4921f;
+      --bow-seal: #5b8def;
+      --bow-mark: #b07cff;
+      --bow-demon: #ef6b6b;
+      --success: #3ecf8e;
+      --danger: #ef4444;
+      --chapter-colors: #3ecf8e, #5b8def, #b07cff, #f0b429, #ef6b6b, #06b6d4, #a78bfa, #f97316, #ec4899;
+      --radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(91, 141, 239, 0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(240, 180, 41, 0.08), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 24px 20px 80px; }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p { color: var(--muted); font-size: 0.9rem; }
+    header a { color: var(--accent); text-decoration: none; }
+    header a:hover { text-decoration: underline; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 20px 0 28px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: var(--surface);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.seal { background: var(--bow-seal); }
+    .dot.mark { background: var(--bow-mark); }
+    .dot.demon { background: var(--bow-demon); }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box:focus { border-color: var(--accent); }
+
+    .chapter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chapter-tab {
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .chapter-tab:hover, .chapter-tab.active {
+      background: var(--surface-hover);
+      color: var(--text);
+      border-color: var(--accent-dim);
+    }
+
+    .chapter-tab.active { box-shadow: 0 0 0 1px var(--accent-dim); }
+
+    .phase-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .phase-tab {
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .phase-tab:hover { background: var(--surface-hover); color: var(--text); }
+    .phase-tab.active {
+      background: rgba(240, 180, 41, 0.15);
+      color: var(--accent);
+      border-color: var(--accent-dim);
+    }
+
+    .chapter-section.post-dragon .chapter-badge::after {
+      content: "龙后";
+      font-size: 0.55rem;
+      margin-left: 4px;
+      opacity: 0.85;
+    }
+
+    .stage-card.finale::before { background: linear-gradient(90deg, #fde047, #f472b6, #fde047); }
+
+    .flow-container { position: relative; }
+
+    .chapter-section {
+      margin-bottom: 40px;
+      scroll-margin-top: 20px;
+    }
+
+    .chapter-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-left: 4px;
+    }
+
+    .chapter-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .chapter-title { font-size: 1.15rem; font-weight: 600; }
+    .chapter-subtitle { font-size: 0.85rem; color: var(--muted); }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      position: relative;
+    }
+
+    .stage-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--chapter-color, var(--accent));
+    }
+
+    .stage-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: var(--chapter-color, var(--accent-dim));
+    }
+
+    .stage-card.prep { border-style: dashed; }
+    .stage-card.dps-check::after {
+      content: "DPS检测";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.65rem;
+      background: rgba(239, 107, 107, 0.2);
+      color: var(--bow-demon);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .stage-name {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      padding-right: 60px;
+    }
+
+    .equip-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .equip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .equip-label {
+      flex-shrink: 0;
+      width: 28px;
+      font-weight: 600;
+      color: var(--muted);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+    }
+
+    .equip-value { flex: 1; line-height: 1.4; }
+
+    .bow-tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .bow-tag.seal { background: rgba(91, 141, 239, 0.25); color: var(--bow-seal); }
+    .bow-tag.mark { background: rgba(176, 124, 255, 0.25); color: var(--bow-mark); }
+    .bow-tag.demon { background: rgba(239, 107, 107, 0.25); color: var(--bow-demon); }
+    .bow-tag.magic { background: rgba(244, 114, 182, 0.25); color: #f472b6; }
+
+    .dot.magic { background: #f472b6; }
+
+    .accessories-preview {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .accessories-preview span { color: var(--accent); }
+
+    .accessory-image-wrap {
+      margin-top: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .accessory-image-wrap img {
+      display: block;
+      width: 100%;
+      height: auto;
+      cursor: zoom-in;
+    }
+
+    .accessory-image-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .detail-images {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .detail-image-block {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .detail-image-block img {
+      display: block;
+      width: 100%;
+      height: auto;
+      cursor: zoom-in;
+    }
+
+    .detail-image-caption {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    .image-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+      cursor: zoom-out;
+    }
+
+    .image-lightbox.open { opacity: 1; visibility: visible; }
+
+    .image-lightbox img {
+      max-width: min(960px, 95vw);
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .click-hint {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 85vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      transform: scale(0.95) translateY(10px);
+      transition: transform 0.25s;
+    }
+
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    }
+
+    .modal-header h2 { font-size: 1.25rem; font-weight: 700; }
+    .modal-chapter { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .modal-close:hover { color: var(--text); background: var(--surface-hover); }
+
+    .modal-body {
+      padding: 20px 24px 24px;
+      overflow-y: auto;
+    }
+
+    .detail-section { margin-bottom: 20px; }
+    .detail-section:last-child { margin-bottom: 0; }
+
+    .detail-section h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 8px;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+    }
+
+    .detail-row .label { color: var(--muted); font-weight: 500; }
+
+    .detail-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .detail-list li {
+      font-size: 0.88rem;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+      border-left: 3px solid var(--border);
+    }
+
+    .detail-list li.farm { border-left-color: var(--success); }
+    .detail-list li.craft { border-left-color: var(--bow-seal); }
+    .detail-list li.tip { border-left-color: var(--accent); }
+    .detail-list li.warn { border-left-color: var(--danger); }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+    }
+
+    .progression-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 32px;
+      overflow-x: auto;
+    }
+
+    .progression-bar h2 {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .progression-track {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: max-content;
+      padding-bottom: 4px;
+    }
+
+    .progress-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 0 4px;
+      transition: transform 0.2s;
+    }
+
+    .progress-node:hover { transform: scale(1.05); }
+
+    .progress-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      transition: all 0.2s;
+    }
+
+    .progress-node.active .progress-dot,
+    .progress-node:hover .progress-dot {
+      background: var(--node-color, var(--accent));
+      border-color: var(--node-color, var(--accent));
+      box-shadow: 0 0 12px var(--node-color, var(--accent));
+    }
+
+    .progress-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      max-width: 56px;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .progress-line {
+      width: 24px;
+      height: 2px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 600px) {
+      .detail-row { grid-template-columns: 1fr; gap: 4px; }
+      .stage-card.dps-check::after { font-size: 0.6rem; top: 10px; right: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>无赎弓流程 · 完整装备攻略</h1>
+      <p>
+        <a href="../index.html">← 返回导航</a>
+        · 龙前：<a href="https://www.mcmod.cn/post/5756.html" target="_blank" rel="noopener">3.11.2 攻略</a>
+        · 龙后：<a href="https://www.mcmod.cn/post/5757.html" target="_blank" rel="noopener">3.9.9 龙后攻略</a>
+        · 点击卡片查看详情
+      </p>
+    </header>
+
+    <div class="legend">
+      <div class="legend-item"><span class="dot seal"></span>封弓 — 稳定输出</div>
+      <div class="legend-item"><span class="dot mark"></span>印弓 — 控制/特殊</div>
+      <div class="legend-item"><span class="dot demon"></span>妖弓 — 高爆发</div>
+      <div class="legend-item"><span class="dot magic"></span>魔弓 — 终局魔法弓</div>
+    </div>
+
+    <div class="progression-bar">
+      <h2>弓线装备演进</h2>
+      <div class="progression-track" id="progressionTrack"></div>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" class="search-box" id="searchBox" placeholder="搜索 Boss、装备、饰品…" />
+      <div class="phase-tabs" id="phaseTabs">
+        <button type="button" class="phase-tab active" data-phase="all">全部</button>
+        <button type="button" class="phase-tab" data-phase="pre">龙前</button>
+        <button type="button" class="phase-tab" data-phase="post">龙后</button>
+      </div>
+      <div class="chapter-tabs" id="chapterTabs"></div>
+    </div>
+
+    <div class="flow-container" id="flowContainer"></div>
+
+    <footer>
+      数据来源：M1tsukasa_Ayase 个人攻略 · 配图来自
+      <a href="https://www.mcmod.cn/post/5756.html" target="_blank" rel="noopener">龙前</a> /
+      <a href="https://www.mcmod.cn/post/5757.html" target="_blank" rel="noopener">龙后</a>
+    </footer>
+  </div>
+
+  <script src="post-dragon-data.js"></script>
+
+  <div class="image-lightbox" id="imageLightbox" aria-hidden="true">
+    <img id="lightboxImg" alt="增伤饰品配置大图" />
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle"></h2>
+          <div class="modal-chapter" id="modalChapter"></div>
+        </div>
+        <button class="modal-close" id="modalClose" aria-label="关闭">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const CHAPTER_COLORS = [
+      "#3ecf8e", "#5b8def", "#b07cff", "#f0b429", "#ef6b6b",
+      "#06b6d4", "#a78bfa", "#f97316", "#ec4899", "#14b8a6"
+    ];
+
+    const BOW_PROGRESSION = [
+      { name: "绿宝石弓", type: "demon", chapter: 0 },
+      { name: "海王弓", type: "seal", chapter: 0 },
+      { name: "极光之耀", type: "mark", chapter: 1 },
+      { name: "咒魂弓", type: "seal", chapter: 6 },
+      { name: "双生对影", type: "demon", chapter: 7 },
+      { name: "末影处刑弓", type: "demon", chapter: 9 },
+    ];
+
+    const IMG_BASE = "https://i.mcmod.cn/editor/upload";
+
+    /** 增伤饰品配图，直接引用 MC百科原文 CDN */
+    const STAGE_IMAGES = {
+      shuangdong: [`${IMG_BASE}/20260102/1767354332_1252418_iEch.webp`],
+      taiyang: [`${IMG_BASE}/20260102/1767354815_1252418_phyD.webp`],
+      gangtie: [`${IMG_BASE}/20260102/1767354815_1252418_phyD.webp`],
+      zombie: [`${IMG_BASE}/20260102/1767354896_1252418_vinp.webp`],
+      skeleton: [`${IMG_BASE}/20260102/1767354896_1252418_vinp.webp`],
+      creeper: [`${IMG_BASE}/20260102/1767355003_1252418_lzCZ.webp`],
+      enderman: [`${IMG_BASE}/20260102/1767355003_1252418_lzCZ.webp`],
+      skura: [`${IMG_BASE}/20260102/1767355093_1252418_OquD.webp`],
+      jinuola: [`${IMG_BASE}/20260102/1767355119_1252418_mOfk.webp`],
+      safira: [`${IMG_BASE}/20260102/1767355146_1252418_QmLe.webp`],
+      yiduan: [`${IMG_BASE}/20260102/1767355172_1252418_Tpho.webp`],
+      zai_e: [`${IMG_BASE}/20260102/1767355202_1252418_yMcV.webp`],
+      zhaoze: [`${IMG_BASE}/20260102/1767355202_1252418_yMcV.webp`],
+      guardian: [`${IMG_BASE}/20260102/1767355330_1252418_rYJF.webp`],
+      drown: [`${IMG_BASE}/20260102/1767355330_1252418_rYJF.webp`],
+      leviathan: [`${IMG_BASE}/20260102/1767355421_1252418_LpQP.webp`],
+      bell: [`${IMG_BASE}/20260102/1767357274_1252418_gGPM.webp`],
+      lich: [`${IMG_BASE}/20260102/1767357274_1252418_gGPM.webp`],
+      captain: [`${IMG_BASE}/20260102/1767357274_1252418_gGPM.webp`],
+      icecrab: [`${IMG_BASE}/20260102/1767357274_1252418_gGPM.webp`],
+      wither: [`${IMG_BASE}/20260102/1767357352_1252418_SSFD.webp`],
+      voidflower: [`${IMG_BASE}/20260102/1767357376_1252418_Hrry.webp`],
+      knight10: [`${IMG_BASE}/20260102/1767357395_1252418_lWby.webp`],
+      fish: [`${IMG_BASE}/20260102/1767357395_1252418_lWby.webp`],
+      desert: [`${IMG_BASE}/20260102/1767357527_1252418_nCEG.webp`],
+      soul: [`${IMG_BASE}/20260102/1767359713_1252418_SZui.webp`],
+      slide: [`${IMG_BASE}/20260102/1767359713_1252418_SZui.webp`],
+      whale: [`${IMG_BASE}/20260102/1767359713_1252418_SZui.webp`],
+      valkyrie: [`${IMG_BASE}/20260102/1767362604_1252418_GcoZ.webp`],
+      poison: [`${IMG_BASE}/20260102/1767362604_1252418_GcoZ.webp`],
+      mohun: [`${IMG_BASE}/20260102/1767362604_1252418_GcoZ.webp`],
+      warden: [`${IMG_BASE}/20260102/1767362604_1252418_GcoZ.webp`],
+      skull: [`${IMG_BASE}/20260102/1767362604_1252418_GcoZ.webp`],
+      sculk: [`${IMG_BASE}/20260102/1767366704_1252418_cvUV.webp`],
+      pain: [`${IMG_BASE}/20260102/1767366704_1252418_cvUV.webp`],
+      deer: [`${IMG_BASE}/20260102/1767366704_1252418_cvUV.webp`],
+      nameless: [`${IMG_BASE}/20260102/1767368110_1252418_BZkY.webp`],
+      deadking: [`${IMG_BASE}/20260102/1767368110_1252418_BZkY.webp`],
+      hell: [`${IMG_BASE}/20260103/1767371133_1252418_VZHZ.webp`],
+      fortuna: [`${IMG_BASE}/20260103/1767371163_1252418_TAnN.webp`],
+      chaos: [`${IMG_BASE}/20251118/1763464820_1252418_QrnJ.webp`],
+      dragon: [
+        `${IMG_BASE}/20260103/1767372702_1252418_UDuR.webp`,
+        `${IMG_BASE}/20251017/1760635654_1252418_UnPk.webp`,
+        `${IMG_BASE}/20251017/1760635654_1252418_Nblr.webp`,
+      ],
+      tree: [`${IMG_BASE}/20260103/1767380194_1252418_pumG.webp`],
+    };
+
+    const IMAGE_CAPTIONS = {
+      dragon: ["增伤饰品配置", "末地外岛紫颂刚玉建筑（初始）", "建筑生成后"],
+    };
+
+    function getStageImages(stage) {
+      return STAGE_IMAGES[stage.id] || [];
+    }
+
+    function cleanAccessoryText(text) {
+      if (!text) return text;
+      return text
+        .replace(/\s*·?\s*见原文第\d+图/g, "")
+        .replace(/见原文第\d+图\s*·?\s*/g, "")
+        .replace(/^见原文第\d+图$/g, "")
+        .trim();
+    }
+
+    function renderAccessoryImages(images, stage, compact) {
+      if (!images.length) return "";
+      const primary = images[0];
+      const captions = IMAGE_CAPTIONS[stage.id] || [];
+      if (compact) {
+        return `
+          <div class="accessory-image-wrap" data-no-modal="true">
+            <img src="${primary}" alt="${stage.name} 增伤饰品" loading="lazy" referrerpolicy="no-referrer" />
+            <div class="accessory-image-label">增伤饰品 · 点击放大</div>
+          </div>
+        `;
+      }
+      return `
+        <div class="detail-section">
+          <h3>增伤饰品配置</h3>
+          <div class="detail-images">
+            ${images.map((url, i) => `
+              <div class="detail-image-block" data-no-modal="true">
+                <img src="${url}" alt="${stage.name} 增伤饰品${images.length > 1 ? " " + (i + 1) : ""}" loading="lazy" referrerpolicy="no-referrer" />
+                ${images.length > 1 ? `<div class="detail-image-caption">${captions[i] || `配图 ${i + 1}`}</div>` : ""}
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function openLightbox(src, alt) {
+      const lb = document.getElementById("imageLightbox");
+      const img = document.getElementById("lightboxImg");
+      img.src = src;
+      img.alt = alt || "增伤饰品配置";
+      lb.classList.add("open");
+      lb.setAttribute("aria-hidden", "false");
+    }
+
+    function closeLightbox() {
+      const lb = document.getElementById("imageLightbox");
+      lb.classList.remove("open");
+      lb.setAttribute("aria-hidden", "true");
+      document.getElementById("lightboxImg").removeAttribute("src");
+      if (!document.getElementById("modalOverlay").classList.contains("open")) {
+        document.body.style.overflow = "";
+      }
+    }
+
+    function bindImageZoom(root) {
+      root.querySelectorAll(".accessory-image-wrap img, .detail-image-block img").forEach((img) => {
+        img.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openLightbox(img.src, img.alt);
+        });
+      });
+    }
+
+    const DATA = [
+      {
+        chapter: 0,
+        title: "第0章",
+        subtitle: "霜冻巨兽前 · 前期准备",
+        stages: [
+          {
+            id: "prep",
+            name: "前期准备",
+            prep: true,
+            bow: "金弓 → 绿宝石弓『妖弓』/ 海王弓『封弓』",
+            bowType: "mixed",
+            arrows: "普通箭",
+            armor: "皮革套 → 钻石/下界合金套",
+            accessories: "全鹰眼词缀 · 精灵箭袋 · 牢固鞋钉",
+            accessoryNote: "功能性：潮汐利爪、渡鸦斗篷、云朵瓶、阿涅摩伊之杖",
+            tips: [
+              "死亡10次获绝望者证章 → 提交无厄之册 → 无赎之戒 + 无赎核心",
+              "博丽神社搜刮：切石机、火把花、力量/本能释放、火矢附魔",
+              "附魔台30级可出无尽箭袋，拆分后给海王弓单独上",
+              "K键技能树箭术伤害点满",
+              "金兰花种子 + 自然祝福/收获专家无限收菜复制锭",
+              "装备词缀：急速/装甲/充沛（速度不够换急速）",
+            ],
+            farm: ["牢固鞋钉", "黑曜石戒指（可选）", "精灵花冠", "无尽箭袋附魔"],
+            craft: ["冒险者之证", "精灵箭袋", "星河贸易站", "召唤祭坛", "金兰花种子"],
+          },
+        ],
+      },
+      {
+        chapter: 1,
+        title: "第1章",
+        subtitle: "通臂大师 · 霜冻巨兽 · 太阳鸟 · 钢铁守护者",
+        stages: [
+          {
+            id: "tongbi",
+            name: "通臂大师",
+            bow: "—",
+            arrows: "—",
+            armor: "—",
+            accessories: "潮汐利爪",
+            tips: ["潮汐利爪右键抓住到顶端，再右击通臂大师"],
+            farm: [],
+            craft: ["大地手套", "自然指南针", "探险家指南针"],
+          },
+          {
+            id: "shuangdong",
+            name: "霜冻巨兽",
+            bow: "绿宝石弓『妖弓』/ 海王弓『封弓』",
+            bowEnchants: "力量5 + 火矢 · 无尽箭袋（海王）",
+            bowType: "mixed",
+            arrows: "箭",
+            armor: "保护5 + 魔法类型抗性5",
+            accessories: "精灵箭袋 · 疾行项链（可选）",
+            accessoryNote: "增伤饰品见原文第1图",
+            tips: [
+              "仅本章提供绿宝石弓打法，后续均为海王弓",
+              "打前尽可能升高箭术等级",
+              "完成千古作物进度获复仇之心",
+              "能量晶核慢可先打钢铁守护者",
+            ],
+            farm: [],
+            craft: ["速之力", "工匠作坊", "天华锻座/加热器/砧"],
+          },
+          {
+            id: "taiyang",
+            name: "太阳鸟",
+            bow: "绿宝石弓『妖弓』/ 海王弓『封弓』",
+            bowEnchants: "力量5 + 火矢 · 无尽箭袋",
+            bowType: "mixed",
+            arrows: "箭",
+            accessories: "见原文第2图",
+            tips: ["直接打，弓可无视无敌"],
+            farm: ["珠宝腰带", "步枪瞄准镜"],
+            craft: ["星星项链", "极光之耀『印弓』", "灵魂之星"],
+          },
+          {
+            id: "gangtie",
+            name: "钢铁守护者",
+            bow: "绿宝石弓『妖弓』/ 海王弓『封弓』",
+            bowEnchants: "力量5 + 火矢 · 无尽箭袋",
+            bowType: "mixed",
+            arrows: "箭",
+            accessories: "见原文第2图",
+            tips: ["直接打，弓可无视无敌", "刷能量晶核较快"],
+            farm: [],
+            craft: [],
+          },
+        ],
+      },
+      {
+        chapter: 2,
+        title: "第2章",
+        subtitle: "突变体系列",
+        stages: [
+          {
+            id: "zombie",
+            name: "僵尸突变体",
+            bow: "海王弓『封弓』/ 极光之耀『印弓』",
+            bowEnchants: "力量5 · 无尽箭袋（海王）",
+            bowType: "mixed",
+            arrows: "光灵箭 / 裂隙碎片（极光之耀）",
+            accessories: "见原文第4图",
+            tips: ["保持距离一直射", "极光之耀可控死无伤", "别忘了打火石点燃"],
+            farm: [],
+            craft: ["医药箱"],
+          },
+          {
+            id: "skeleton",
+            name: "骷髅突变体",
+            bow: "海王弓『封弓』/ 极光之耀『印弓』",
+            bowEnchants: "力量5 · 无尽箭袋",
+            bowType: "mixed",
+            arrows: "光灵箭 / 裂隙碎片",
+            armor: "骷髅突变体胸甲 + 头颅 · 罪魂钢套（可选）",
+            accessories: "游侠徽章×3+ · 见原文第4图",
+            tips: [
+              "佩戴骷髅突变体头颅，海王弓一次射三根箭",
+              "头颅用丘比娃娃切鹰眼打词缀",
+              "木箭也能轻松打过",
+            ],
+            farm: ["游侠徽章（至少3个）"],
+            craft: ["骷髅突变体胸甲", "罪魂钢套（可延后）"],
+          },
+          {
+            id: "creeper",
+            name: "苦力怕突变体",
+            bow: "海王弓『封弓』/ 极光之耀『印弓』",
+            bowEnchants: "力量5 · 无尽箭袋",
+            bowType: "mixed",
+            arrows: "光灵箭 / 裂隙碎片",
+            accessories: "见原文第6图",
+            tips: ["极光之耀控死无伤", "炼金台后做丘比娃娃敲词缀"],
+            farm: [],
+            craft: ["炼金台", "丘比娃娃"],
+          },
+          {
+            id: "enderman",
+            name: "末影人突变体",
+            bow: "海王弓『封弓』/ 极光之耀『印弓』",
+            bowEnchants: "力量5 + 火矢（海王）",
+            bowType: "mixed",
+            arrows: "光灵箭 / 裂隙碎片",
+            accessories: "魔法箭袋×3+ · 见原文第6图",
+            tips: [
+              "先去古城摸蒙眼布",
+              "不要戴毒牙项链，不要在地狱天花板打",
+            ],
+            farm: ["魔法箭袋（至少3个）"],
+            craft: ["Necora病毒"],
+            warn: ["boss会乱飞，可能瞬移到基岩下"],
+          },
+          {
+            id: "skura",
+            name: "斯库拉",
+            bow: "绿宝石弓『妖弓』/ 极光之耀『印弓』",
+            bowEnchants: "力量5 + 火矢（绿宝石）",
+            bowType: "mixed",
+            arrows: "光灵箭 / 裂隙碎片",
+            accessories: "见原文第8图",
+            tips: [
+              "卫城挖女神雕像：瓶子草、火把花、末地烛",
+              "魔法石英花左3条：神话暴击率/暴击伤害",
+              "右侧：活力迸发/纯化抗性/箭矢增强",
+            ],
+            farm: ["免疫神圣城堡（魔法石英花）"],
+            craft: ["魔法石英花", "万象模板", "璀璨末地书架"],
+          },
+        ],
+      },
+      {
+        chapter: 3,
+        title: "第3章",
+        subtitle: "基诺拉 · 萨菲拉 · 灾厄系列",
+        stages: [
+          {
+            id: "jinuola",
+            name: "基诺拉",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5 + 火矢",
+            bowType: "seal",
+            arrows: "箭",
+            accessories: "见原文第9图",
+            tips: ["直接打"],
+            farm: ["七剑修罗剑阵之章", "战士徽章×3+"],
+            craft: ["天界石"],
+          },
+          {
+            id: "safira",
+            name: "萨菲拉",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5 + 火矢",
+            bowType: "seal",
+            arrows: "箭",
+            accessories: "见原文第10图",
+            tips: ["伤害不够多敲鹰眼或升级海王弓"],
+            farm: ["巫师徽章×3+", "生命补片（最多10个）"],
+            craft: ["复仇者勋章"],
+          },
+          {
+            id: "yiduan",
+            name: "异端堕落先知",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5 + 火矢",
+            bowType: "seal",
+            arrows: "箭",
+            accessories: "见原文第11图",
+            tips: ["用方块围起来可无伤"],
+            farm: ["怪异的瘟疫苹果", "亡灵徽章", "邪祟之戒（暂不戴）"],
+            craft: [],
+          },
+          {
+            id: "zai_e",
+            name: "灾厄教父",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5 + 火矢",
+            bowType: "seal",
+            arrows: "箭",
+            accessories: "见原文第12图",
+            tips: ["需打4次获4不详碎片合成不详核心", "打完击杀唤潮者获溺尸腰带并升满"],
+            farm: ["溺尸腰带（唤潮者）"],
+            craft: ["黑暗祭坛", "不详核心"],
+          },
+          {
+            id: "zhaoze",
+            name: "沼泽巨颌怪",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5 + 火矢",
+            bowType: "seal",
+            arrows: "箭",
+            accessories: "见原文第12图",
+            tips: ["路边一条"],
+            farm: ["不灭苞荚"],
+            craft: ["精灵项链", "囚笼之心", "噩梦基座"],
+          },
+        ],
+      },
+      {
+        chapter: 4,
+        title: "第4章",
+        subtitle: "海洋系列 · 利维坦",
+        stages: [
+          {
+            id: "guardian",
+            name: "远古守卫者",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5",
+            bowType: "seal",
+            arrows: "闪电箭 / 吸血箭",
+            accessories: "溺尸腰带（满级）· 见原文第14图",
+            tips: ["溺尸腰带记得升满"],
+            farm: ["塔罗牌·倒吊者"],
+            craft: ["十字章护身符"],
+          },
+          {
+            id: "drown",
+            name: "溺亡者",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5",
+            bowType: "seal",
+            arrows: "吸血箭 / 闪电箭",
+            accessories: "海神王冠 + 海神卷轴 + 守卫者眼球 · 见原文第14图",
+            tips: [
+              "围场后拉5格距离",
+              "备选：三叉戟引雷+愤怒20+忠诚",
+            ],
+            farm: [],
+            craft: ["魔法石英戒指×2", "毁灭者勋章"],
+          },
+          {
+            id: "leviathan",
+            name: "利维坦",
+            bow: "三叉戟（引雷+愤怒20+忠诚）",
+            bowType: "special",
+            arrows: "无（不用弓）",
+            accessories: "见原文第16图",
+            tips: [
+              "先吃受祝福的紫水晶蟹肉",
+              "利维坦高动态减伤，弓基本打不出伤害",
+              "三叉戟右键打，切弓破适应",
+              "魔法保护10 + 魔法类型抗性10（建议4魔保）",
+            ],
+            farm: ["泰坦手套", "水蛭剑鞘"],
+            craft: ["潜行者箭袋", "奥术迭代器", "秘术晶核"],
+            warn: ["配饰栏不够需替换石巨人之眼"],
+          },
+          {
+            id: "bell",
+            name: "敲钟人",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5",
+            bowType: "seal",
+            arrows: "吸血箭",
+            accessories: "见原文第17图",
+            tips: ["吸血箭破适应，路边一条"],
+            farm: ["铁箭", "落魄"],
+            craft: ["暴食徽章"],
+          },
+        ],
+      },
+      {
+        chapter: 5,
+        title: "第5章",
+        subtitle: "暗夜巫妖 · 船长 · 凋零",
+        stages: [
+          {
+            id: "lich",
+            name: "暗夜巫妖",
+            bow: "极光之耀『印弓』/ 海王弓『封弓』",
+            bowEnchants: "力量5",
+            bowType: "mixed",
+            arrows: "裂隙碎片 / 天境史维特铁箭",
+            accessories: "见原文第17图（建议下精灵箭袋）",
+            tips: [
+              "精灵箭袋击退2会导致脱战回满血，建议下掉",
+              "下掉后伤害降低，不够就多敲鹰眼",
+            ],
+            farm: ["塔罗牌·月亮"],
+            craft: ["力量10附魔"],
+          },
+          {
+            id: "captain",
+            name: "科妮莉亚船长幽灵",
+            dpsCheck: true,
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "天境史维特铁箭",
+            armor: "罪魂钢套 + 骷髅突变体胸甲/头颅",
+            accessories: "见原文第17图 · 水里吃溺尸腰带增伤",
+            tips: [
+              "弓线DPS检测器",
+              "下掉Necora病毒，水里脱渡鸦斗篷",
+              "不够伤害：腐香囊→侦察镜，或罪魂钢套过渡",
+              "海上流浪者套装不必刷满最高值",
+            ],
+            farm: ["生命强化基因", "塔罗牌·女祭司"],
+            craft: ["红心项链", "重型钓鱼竿", "侦察镜（可选前置）"],
+          },
+          {
+            id: "icecrab",
+            name: "冰封蟹",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量5",
+            bowType: "seal",
+            arrows: "天境史维特铁箭 / 闪电铁箭 / 吸血铁箭",
+            accessories: "见原文第17图 · 水里溺尸腰带增伤",
+            tips: ["拉到水里打"],
+            farm: [],
+            craft: ["瓦解聚晶", "玻璃胸针", "扭曲无常符文", "病痛祓除符文"],
+          },
+          {
+            id: "wither",
+            name: "凋零",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "铁箭（不能用吸血铁箭）",
+            armor: "3件魔保10 + 魔抗10",
+            accessories: "见原文第21图",
+            tips: ["边退边射", "吃恶魔之心"],
+            farm: ["疯狂灵药", "凋零图腾×2", "寂灭之星"],
+            craft: ["午夜斗篷", "怪物猎人勋章", "祷告者冠冕", "祭血仪式法术"],
+          },
+        ],
+      },
+      {
+        chapter: 6,
+        title: "第6章",
+        subtitle: "虚空 · 沙漠 · 遗魂",
+        stages: [
+          {
+            id: "voidflower",
+            name: "虚空之花",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血铁箭",
+            accessories: "见原文第22图",
+            tips: ["躲地刺，扛不住做壁垒聚晶"],
+            farm: ["腐香囊"],
+            craft: ["侦察镜", "壁垒聚晶"],
+          },
+          {
+            id: "knight10",
+            name: "惊骇的十之方块骑士",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血铁箭",
+            accessories: "见原文第23图",
+            tips: ["站高处射", "做决裁者徽章时刷恼鬼获灵液瓶+护符栏"],
+            farm: ["灵液瓶（恼鬼）"],
+            craft: ["符文石板", "克苏鲁海洋祭坛", "血之魔盒"],
+          },
+          {
+            id: "fish",
+            name: "化石鱼",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血铁箭",
+            accessories: "见原文第23图",
+            tips: ["一直射"],
+            farm: ["金沙护符", "不朽之身"],
+            craft: ["太阳磁铁"],
+          },
+          {
+            id: "desert",
+            name: "沙漠守卫者",
+            dpsCheck: true,
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血铁箭",
+            armor: "咒魂套 + 骷髅突变体胸甲/头颅",
+            accessories: "见原文第25图 · 灌水溺尸腰带增伤",
+            tips: ["新DPS检测器", "不够：灌水+鹰眼+易伤药水"],
+            farm: ["七剑修罗万法", "塔罗牌·隐者"],
+            craft: ["沙漠项链", "钻石弓『妖弓』", "咒魂弓『封弓』", "咒魂套"],
+          },
+          {
+            id: "soul",
+            name: "远古遗魂",
+            dpsCheck: true,
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血铁箭",
+            accessories: "见原文第26图",
+            tips: ["16格内打，否则高回血", "同为DPS检测器"],
+            farm: ["起源卵蛋（作用不大）"],
+            craft: [],
+          },
+        ],
+      },
+      {
+        chapter: 7,
+        title: "第7章",
+        subtitle: "滑行魔石 · 墨魂 · 云鲸",
+        stages: [
+          {
+            id: "slide",
+            name: "滑行魔石",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血钻石箭",
+            accessories: "见原文第26图",
+            tips: ["先打帝王云鲸获钻石箭", "不要唤醒，直接输出"],
+            farm: ["神奇石头（最高21%增伤）"],
+            craft: [],
+          },
+          {
+            id: "valkyrie",
+            name: "武神女王",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血钻石箭",
+            accessories: "见原文第28图",
+            tips: ["大天使之视可能射中自己，做灵魂盾护身符（半血触发）"],
+            farm: [],
+            craft: ["大天使之视", "女武神镐", "绝缘体", "灵魂盾护身符"],
+          },
+          {
+            id: "poison",
+            name: "突变毒箭花",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血钻石箭",
+            accessories: "见原文第28图",
+            tips: ["不够喷易伤药水"],
+            farm: [],
+            craft: [],
+          },
+          {
+            id: "mohun",
+            name: "远古墨魂化身",
+            bow: "咒魂弓『封弓』",
+            bowType: "seal",
+            arrows: "箭",
+            accessories: "见原文第28图",
+            tips: [
+              "配置正确直接秒杀",
+              "先打完远古墨魂-时之侵蚀传送门",
+              "墨魂神殿区域内击杀获墨魂珑心",
+            ],
+            farm: ["墨魂珑心 → 星月-心栏位"],
+            craft: ["绯红联结『妖弓』"],
+          },
+          {
+            id: "whale",
+            name: "帝王云鲸",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血铁箭",
+            accessories: "见原文第26图",
+            tips: ["伤害溢出", "埋伏性狩猎刷到但不要佩戴"],
+            farm: ["埋伏性狩猎（不佩戴）"],
+            craft: ["双生对影『妖弓』"],
+          },
+        ],
+      },
+      {
+        chapter: 8,
+        title: "第8章",
+        subtitle: "监守者 · 幽匿 · 无名",
+        stages: [
+          {
+            id: "warden",
+            name: "监守者",
+            bow: "海王弓『封弓』/ 双生对影『妖弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "mixed",
+            arrows: "天境史维特钻石箭",
+            accessories: "见原文第28图 · 埋伏性狩猎+潜伏之戒",
+            tips: [
+              "午夜斗篷紫圈外 + 隐身术",
+              "惶恐肉瘤+弱化聚晶必做",
+              "迦赫纳维度完成征服城堡获100祈愿",
+            ],
+            farm: ["塔罗牌·命运之轮", "星云之眼", "天使之祝", "忘却冰晶"],
+            craft: [
+              "深渊之钥", "诺克萨斯纹章", "下界合金弓", "惶恐肉瘤",
+              "弱化聚晶", "神之冠", "充能凋零图腾", "珍钻手环", "破碎之石",
+            ],
+          },
+          {
+            id: "skull",
+            name: "骷髅领主",
+            bow: "海王弓『封弓』/ 双生对影『妖弓』",
+            bowEnchants: "力量10",
+            bowType: "mixed",
+            arrows: "吸血钻石箭",
+            accessories: "见原文第28图",
+            tips: ["先下半身后头，下掉大天使之视防乱飞"],
+            farm: ["偷盗者的狂暴之眼"],
+            craft: [],
+          },
+          {
+            id: "sculk",
+            name: "幽匿诅咒骑士",
+            bow: "海王弓『封弓』/ 双生对影『妖弓』",
+            bowEnchants: "力量10",
+            bowType: "mixed",
+            arrows: "天境史维特钻石箭",
+            accessories: "见原文第34图 · 惶恐肉瘤定住",
+            tips: ["易伤药水+弱化聚晶", "掉落：下界合金箭"],
+            farm: [],
+            craft: ["超凡猎弓『印弓』（攻略不推荐）"],
+          },
+          {
+            id: "pain",
+            name: "永恒苦痛之灵",
+            bow: "海王弓『封弓』/ 双生对影『妖弓』",
+            bowEnchants: "力量10",
+            bowType: "mixed",
+            arrows: "天境史维特下界合金箭",
+            accessories: "见原文第34图",
+            tips: ["惶恐肉瘤定住再打"],
+            farm: [],
+            craft: [],
+          },
+          {
+            id: "deer",
+            name: "释缚的鹿之精魂",
+            bow: "海王弓『封弓』/ 双生对影『妖弓』",
+            bowEnchants: "力量10",
+            bowType: "mixed",
+            arrows: "吸血下界合金箭 / 天境史维特下界合金箭",
+            accessories: "见原文第34图 · 圣遗箭袋（满级）",
+            tips: [
+              "圣遗箭袋满级后可换咒魂胸甲",
+              "空中增伤实测与地面无区别",
+            ],
+            farm: ["圣遗箭袋（升满）"],
+            craft: ["奇异的节日糖果", "培养皿"],
+          },
+          {
+            id: "nameless",
+            name: "无名守卫者",
+            bow: "海王弓『封弓』/ 双生对影『妖弓』",
+            bowEnchants: "力量10",
+            bowType: "mixed",
+            arrows: "天境史维特下界合金箭",
+            accessories: "见原文第37图",
+            tips: [
+              "高动态减伤，需点射不能连射",
+              "不能用吸血下界合金箭",
+              "固定掉落无名幻锭",
+            ],
+            farm: ["未竟之志（可选）"],
+            craft: [],
+          },
+        ],
+      },
+      {
+        chapter: 9,
+        title: "第9章",
+        subtitle: "龙前终章 · 末影龙",
+        stages: [
+          {
+            id: "deadking",
+            name: "死者之王",
+            bow: "海王弓『封弓』/ 咒魂弓『封弓』",
+            bowEnchants: "力量10",
+            bowType: "mixed",
+            arrows: "吸血下界合金箭 / 木箭（咒魂）",
+            accessories: "见原文第37图 · 惶恐肉瘤",
+            tips: ["咒魂弓需破适应", "栏位不够替换游侠徽章"],
+            farm: ["狂暴锁", "暗之十字项链"],
+            craft: ["狙击镜", "史诗墨水"],
+          },
+          {
+            id: "hell",
+            name: "狱火暗域领主",
+            bow: "海王弓『封弓』/ 双生对影『妖弓』",
+            bowEnchants: "力量10",
+            bowType: "mixed",
+            arrows: "吸血下界合金箭",
+            accessories: "见原文第39图",
+            tips: ["惶恐肉瘤定住"],
+            farm: ["血怒水晶", "狱火暗域领主帽"],
+            craft: ["无尽箭袋附魔书", "魔灵箭袋", "大血怒水晶", "战神晶体"],
+          },
+          {
+            id: "fortuna",
+            name: "福尔图娜女爵",
+            bow: "海王弓『封弓』/ 咒魂弓『封弓』",
+            bowEnchants: "力量10",
+            bowType: "mixed",
+            arrows: "吸血下界合金箭 / 木箭（咒魂）",
+            accessories: "见原文第40图",
+            tips: [
+              "翻牌选对一开始晃动的牌",
+              "咒魂弓伤害爆炸",
+              "海王弓高击退可能出bug",
+            ],
+            farm: [],
+            craft: ["铁之王牌"],
+          },
+          {
+            id: "chaos",
+            name: "混沌魔影",
+            bow: "咒魂弓『封弓』",
+            bowType: "seal",
+            arrows: "木箭",
+            accessories: "见原文第41图",
+            tips: [
+              "不吃弱化聚晶和惶恐肉瘤",
+              "只用咒魂弓，其他弓暗属性回血",
+            ],
+            farm: [],
+            craft: ["虚无之书", "魂之接力", "破空之愿"],
+            warn: ["降低灵魂净化度有风险"],
+          },
+          {
+            id: "dragon",
+            name: "末影龙",
+            bow: "咒魂弓『封弓』",
+            bowType: "seal",
+            arrows: "木箭",
+            accessories: "见原文第42图",
+            tips: [
+              "切别的弓箭破适应",
+              "神秘龙蛋+100祈愿，右键天空之城奖杯",
+              "末地外岛紫颂刚玉建筑可提前做保护20",
+            ],
+            farm: ["塔罗牌·教皇", "末影龙魄→配饰栏位"],
+            craft: [
+              "神秘龙蛋", "罪孽囚笼", "末影处刑弓", "心之项链",
+              "暗影瘟疫", "保护/魔保20级",
+            ],
+          },
+          {
+            id: "tree",
+            name: "神树之根-无边恶意",
+            bow: "海王弓『封弓』",
+            bowEnchants: "无尽箭袋 + 力量10",
+            bowType: "seal",
+            arrows: "吸血下界合金箭",
+            accessories: "见原文第45图 · 罪孽囚笼~30%",
+            tips: [
+              "龙前最后一战",
+              "提交不稳定红石余烬先领祈愿和元始珍珠",
+              "不稳定红石余烬可保留复制",
+            ],
+            farm: [],
+            craft: [
+              "简易重铸台", "回收台", "优秀神化宝石",
+              "灵魂方舟", "天体果实",
+            ],
+          },
+        ],
+      },
+    ];
+
+    function parseBowTags(text, type) {
+      if (!text || text === "—") return text;
+      let html = text;
+      html = html.replace(/『封弓』/g, '<span class="bow-tag seal">封弓</span>');
+      html = html.replace(/『印弓』/g, '<span class="bow-tag mark">印弓</span>');
+      html = html.replace(/『妖弓』/g, '<span class="bow-tag demon">妖弓</span>');
+      html = html.replace(/『魔弓』/g, '<span class="bow-tag magic">魔弓</span>');
+      return html;
+    }
+
+    function mergePostDragonData() {
+      const pd = window.MC_POST_DRAGON;
+      if (!pd) return;
+      CHAPTER_COLORS.push(...pd.extraColors);
+      BOW_PROGRESSION.push(...pd.progression);
+      Object.assign(IMAGE_CAPTIONS, pd.imageCaptions || {});
+      Object.entries(pd.images).forEach(([id, paths]) => {
+        STAGE_IMAGES[id] = paths.map((p) => (p.startsWith("http") ? p : `${IMG_BASE}/${p}`));
+      });
+      DATA.push(...pd.chapters);
+    }
+
+    function getChapterPhase(ch) {
+      return ch.phase || (ch.chapter < 10 ? "pre" : "post");
+    }
+
+    function renderProgression() {
+      const track = document.getElementById("progressionTrack");
+      BOW_PROGRESSION.forEach((item, i) => {
+        if (i > 0) {
+          const line = document.createElement("div");
+          line.className = "progression-line";
+          track.appendChild(line);
+        }
+        const node = document.createElement("div");
+        node.className = "progress-node";
+        node.style.setProperty("--node-color", CHAPTER_COLORS[item.chapter] || "#f0b429");
+        node.innerHTML = `
+          <div class="progress-dot"></div>
+          <div class="progress-label">${item.name}</div>
+        `;
+        node.addEventListener("click", () => {
+          const section = document.querySelector(`[data-chapter="${item.chapter}"]`);
+          section?.scrollIntoView({ behavior: "smooth" });
+        });
+        track.appendChild(node);
+      });
+    }
+
+    function renderChapterTabs() {
+      const tabs = document.getElementById("chapterTabs");
+      const all = document.createElement("button");
+      all.className = "chapter-tab active";
+      all.textContent = "全部";
+      all.dataset.chapter = "all";
+      tabs.appendChild(all);
+
+      DATA.forEach((ch) => {
+        const btn = document.createElement("button");
+        btn.className = "chapter-tab";
+        btn.textContent = ch.title;
+        btn.dataset.chapter = ch.chapter;
+        tabs.appendChild(btn);
+      });
+
+      tabs.addEventListener("click", (e) => {
+        const tab = e.target.closest(".chapter-tab");
+        if (!tab) return;
+        tabs.querySelectorAll(".chapter-tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        filterStages();
+      });
+    }
+
+    function renderFlow() {
+      const container = document.getElementById("flowContainer");
+      DATA.forEach((ch) => {
+        const section = document.createElement("section");
+        section.className = "chapter-section" + (getChapterPhase(ch) === "post" ? " post-dragon" : "");
+        section.dataset.chapter = ch.chapter;
+        section.dataset.phase = getChapterPhase(ch);
+        section.style.setProperty("--chapter-color", CHAPTER_COLORS[ch.chapter]);
+
+        section.innerHTML = `
+          <div class="chapter-header">
+            <div class="chapter-badge" style="background:${CHAPTER_COLORS[ch.chapter]}22;color:${CHAPTER_COLORS[ch.chapter]}">${ch.chapter}</div>
+            <div>
+              <div class="chapter-title">${ch.title} · ${ch.subtitle.split("·")[0].trim()}</div>
+              <div class="chapter-subtitle">${ch.subtitle}</div>
+            </div>
+          </div>
+          <div class="stage-grid"></div>
+        `;
+
+        const grid = section.querySelector(".stage-grid");
+        ch.stages.forEach((stage) => {
+          const card = document.createElement("article");
+          card.className = "stage-card"
+            + (stage.prep ? " prep" : "")
+            + (stage.dpsCheck ? " dps-check" : "")
+            + (stage.finale ? " finale" : "");
+          card.style.setProperty("--chapter-color", CHAPTER_COLORS[ch.chapter]);
+          card.dataset.search = [
+            stage.name, stage.bow, stage.arrows, stage.armor, stage.accessories,
+            stage.affixes, stage.gems,
+            ...(stage.tips || []), ...(stage.farm || []), ...(stage.craft || []),
+          ].filter(Boolean).join(" ").toLowerCase();
+
+          const bowDisplay = parseBowTags(stage.bow || "—");
+          const enchants = stage.bowEnchants ? `<br><small style="color:var(--muted)">${stage.bowEnchants}</small>` : "";
+          const images = getStageImages(stage);
+          const accessoryText = cleanAccessoryText(stage.accessories);
+
+          card.innerHTML = `
+            <div class="stage-name">${stage.name}</div>
+            <div class="equip-row">
+              <div class="equip-item">
+                <span class="equip-label">弓</span>
+                <span class="equip-value">${bowDisplay}${enchants}</span>
+              </div>
+              <div class="equip-item">
+                <span class="equip-label">箭</span>
+                <span class="equip-value">${stage.arrows || "—"}</span>
+              </div>
+              ${stage.armor ? `<div class="equip-item"><span class="equip-label">甲</span><span class="equip-value">${stage.armor}</span></div>` : ""}
+              ${stage.affixes ? `<div class="equip-item"><span class="equip-label">词条</span><span class="equip-value">${stage.affixes}</span></div>` : ""}
+              ${stage.gems ? `<div class="equip-item"><span class="equip-label">宝石</span><span class="equip-value">${stage.gems}</span></div>` : ""}
+            </div>
+            ${accessoryText ? `<div class="accessories-preview">饰品：<span>${accessoryText}</span></div>` : ""}
+            ${renderAccessoryImages(images, stage, true)}
+            <div class="click-hint">点击查看详情 →</div>
+          `;
+
+          bindImageZoom(card);
+          card.addEventListener("click", (e) => {
+            if (e.target.closest("[data-no-modal]")) return;
+            openModal(stage, ch);
+          });
+          grid.appendChild(card);
+        });
+
+        container.appendChild(section);
+      });
+    }
+
+    function openModal(stage, chapter) {
+      document.getElementById("modalTitle").textContent = stage.name;
+      document.getElementById("modalChapter").textContent = `${chapter.title} · ${chapter.subtitle}`;
+
+      const body = document.getElementById("modalBody");
+      let html = "";
+      const images = getStageImages(stage);
+      const accessoryText = cleanAccessoryText(stage.accessories);
+
+      html += renderAccessoryImages(images, stage, false);
+
+      html += `<div class="detail-section"><h3>核心装备</h3><div class="detail-grid">`;
+      if (stage.bow) html += `<div class="detail-row"><span class="label">弓</span><span>${parseBowTags(stage.bow)}${stage.bowEnchants ? " · " + stage.bowEnchants : ""}</span></div>`;
+      if (stage.arrows) html += `<div class="detail-row"><span class="label">箭矢</span><span>${stage.arrows}</span></div>`;
+      if (stage.armor) html += `<div class="detail-row"><span class="label">护甲</span><span>${stage.armor}</span></div>`;
+      if (accessoryText) html += `<div class="detail-row"><span class="label">饰品</span><span>${accessoryText}</span></div>`;
+      if (stage.affixes) html += `<div class="detail-row"><span class="label">词条</span><span>${stage.affixes}</span></div>`;
+      if (stage.gems) html += `<div class="detail-row"><span class="label">宝石</span><span>${stage.gems}</span></div>`;
+      const noteText = cleanAccessoryText(stage.accessoryNote);
+      if (noteText) html += `<div class="detail-row"><span class="label">备注</span><span>${noteText}</span></div>`;
+      html += `</div></div>`;
+
+      if (stage.tips?.length) {
+        html += `<div class="detail-section"><h3>打法要点</h3><ul class="detail-list">`;
+        stage.tips.forEach((t) => { html += `<li class="tip">${t}</li>`; });
+        html += `</ul></div>`;
+      }
+
+      if (stage.warn?.length) {
+        html += `<div class="detail-section"><h3>注意事项</h3><ul class="detail-list">`;
+        stage.warn.forEach((w) => { html += `<li class="warn">${w}</li>`; });
+        html += `</ul></div>`;
+      }
+
+      if (stage.farm?.length) {
+        html += `<div class="detail-section"><h3>建议刷取</h3><ul class="detail-list">`;
+        stage.farm.forEach((f) => { html += `<li class="farm">${f}</li>`; });
+        html += `</ul></div>`;
+      }
+
+      if (stage.craft?.length) {
+        html += `<div class="detail-section"><h3>可制作物品</h3><ul class="detail-list">`;
+        stage.craft.forEach((c) => { html += `<li class="craft">${c}</li>`; });
+        html += `</ul></div>`;
+      }
+
+      if (stage.dpsCheck) {
+        html += `<div class="tag-row"><span class="tag" style="border-color:var(--bow-demon);color:var(--bow-demon)">DPS 检测点</span></div>`;
+      }
+
+      body.innerHTML = html;
+      bindImageZoom(body);
+      document.getElementById("modalOverlay").classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      document.getElementById("modalOverlay").classList.remove("open");
+      if (!document.getElementById("imageLightbox").classList.contains("open")) {
+        document.body.style.overflow = "";
+      }
+    }
+
+    function filterStages() {
+      const query = document.getElementById("searchBox").value.toLowerCase().trim();
+      const activeTab = document.querySelector(".chapter-tab.active");
+      const chapterFilter = activeTab?.dataset.chapter || "all";
+      const activePhase = document.querySelector(".phase-tab.active");
+      const phaseFilter = activePhase?.dataset.phase || "all";
+
+      document.querySelectorAll(".chapter-section").forEach((section) => {
+        const ch = section.dataset.chapter;
+        const phase = section.dataset.phase;
+        const chapterMatch = chapterFilter === "all" || chapterFilter === ch;
+        const phaseMatch = phaseFilter === "all" || phaseFilter === phase;
+        let anyVisible = false;
+
+        section.querySelectorAll(".stage-card").forEach((card) => {
+          const searchMatch = !query || card.dataset.search.includes(query);
+          const visible = chapterMatch && phaseMatch && searchMatch;
+          card.style.display = visible ? "" : "none";
+          if (visible) anyVisible = true;
+        });
+
+        section.style.display = anyVisible ? "" : "none";
+      });
+    }
+
+    document.getElementById("searchBox").addEventListener("input", filterStages);
+    document.getElementById("phaseTabs").addEventListener("click", (e) => {
+      const tab = e.target.closest(".phase-tab");
+      if (!tab) return;
+      document.querySelectorAll(".phase-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      filterStages();
+    });
+    document.getElementById("modalClose").addEventListener("click", closeModal);
+    document.getElementById("modalOverlay").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (document.getElementById("imageLightbox").classList.contains("open")) {
+          closeLightbox();
+        } else {
+          closeModal();
+        }
+      }
+    });
+
+    document.getElementById("imageLightbox").addEventListener("click", closeLightbox);
+
+    mergePostDragonData();
+    renderProgression();
+    renderChapterTabs();
+    renderFlow();
+  </script>
+</body>
+</html>

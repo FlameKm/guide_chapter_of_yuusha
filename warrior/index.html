@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>勇者战流程 · 完整装备攻略</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface-hover: #243044;
+      --border: #2d3f56;
+      --text: #e8edf4;
+      --muted: #8b9cb3;
+      --accent: #ef6b6b;
+      --accent-dim: #dc2626;
+      --bow-seal: #5b8def;
+      --bow-mark: #b07cff;
+      --bow-demon: #ef6b6b;
+      --success: #3ecf8e;
+      --danger: #ef4444;
+      --chapter-colors: #3ecf8e, #5b8def, #b07cff, #f0b429, #ef6b6b, #06b6d4, #a78bfa, #f97316, #ec4899;
+      --radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Noto Sans SC", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(239, 107, 107, 0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(240, 180, 41, 0.08), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 24px 20px 80px; }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p { color: var(--muted); font-size: 0.9rem; }
+    header a { color: var(--accent); text-decoration: none; }
+    header a:hover { text-decoration: underline; }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 20px 0 28px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: var(--surface);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.seal { background: var(--bow-seal); }
+    .dot.mark { background: var(--bow-mark); }
+    .dot.demon { background: var(--bow-demon); }
+    .dot.pot { background: #f97316; }
+    .dot.sword { background: #ef4444; }
+    .dot.tyr { background: #a855f7; }
+    .dot.ult { background: #fde047; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box:focus { border-color: var(--accent); }
+
+    .chapter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chapter-tab {
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .chapter-tab:hover, .chapter-tab.active {
+      background: var(--surface-hover);
+      color: var(--text);
+      border-color: var(--accent-dim);
+    }
+
+    .chapter-tab.active { box-shadow: 0 0 0 1px var(--accent-dim); }
+
+    .phase-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .phase-tab {
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .phase-tab:hover { background: var(--surface-hover); color: var(--text); }
+    .phase-tab.active {
+      background: rgba(240, 180, 41, 0.15);
+      color: var(--accent);
+      border-color: var(--accent-dim);
+    }
+
+    .chapter-section.post-dragon .chapter-badge::after {
+      content: "龙后";
+      font-size: 0.55rem;
+      margin-left: 4px;
+      opacity: 0.85;
+    }
+
+    .stage-card.finale::before { background: linear-gradient(90deg, #fde047, #f472b6, #fde047); }
+
+    .flow-container { position: relative; }
+
+    .chapter-section {
+      margin-bottom: 40px;
+      scroll-margin-top: 20px;
+    }
+
+    .chapter-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-left: 4px;
+    }
+
+    .chapter-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .chapter-title { font-size: 1.15rem; font-weight: 600; }
+    .chapter-subtitle { font-size: 0.85rem; color: var(--muted); }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      position: relative;
+    }
+
+    .stage-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--chapter-color, var(--accent));
+    }
+
+    .stage-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: var(--chapter-color, var(--accent-dim));
+    }
+
+    .stage-card.prep { border-style: dashed; }
+    .stage-card.dps-check::after {
+      content: "DPS检测";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.65rem;
+      background: rgba(239, 107, 107, 0.2);
+      color: var(--bow-demon);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .stage-name {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      padding-right: 60px;
+    }
+
+    .equip-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .equip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .equip-label {
+      flex-shrink: 0;
+      width: 28px;
+      font-weight: 600;
+      color: var(--muted);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+    }
+
+    .equip-value { flex: 1; line-height: 1.4; }
+
+    .bow-tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .bow-tag.seal { background: rgba(91, 141, 239, 0.25); color: var(--bow-seal); }
+    .bow-tag.mark { background: rgba(176, 124, 255, 0.25); color: var(--bow-mark); }
+    .bow-tag.demon { background: rgba(239, 107, 107, 0.25); color: var(--bow-demon); }
+    .bow-tag.magic { background: rgba(244, 114, 182, 0.25); color: #f472b6; }
+
+    .dot.magic { background: #f472b6; }
+
+    .accessories-preview {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .accessories-preview span { color: var(--accent); }
+
+    .accessory-image-wrap {
+      margin-top: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .accessory-image-wrap img {
+      display: block;
+      width: 100%;
+      height: auto;
+      cursor: zoom-in;
+    }
+
+    .accessory-image-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .detail-images {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .detail-image-block {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .detail-image-block img {
+      display: block;
+      width: 100%;
+      height: auto;
+      cursor: zoom-in;
+    }
+
+    .detail-image-caption {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    .image-lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+      cursor: zoom-out;
+    }
+
+    .image-lightbox.open { opacity: 1; visibility: visible; }
+
+    .image-lightbox img {
+      max-width: min(960px, 95vw);
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .click-hint {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 85vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      transform: scale(0.95) translateY(10px);
+      transition: transform 0.25s;
+    }
+
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    }
+
+    .modal-header h2 { font-size: 1.25rem; font-weight: 700; }
+    .modal-chapter { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .modal-close:hover { color: var(--text); background: var(--surface-hover); }
+
+    .modal-body {
+      padding: 20px 24px 24px;
+      overflow-y: auto;
+    }
+
+    .detail-section { margin-bottom: 20px; }
+    .detail-section:last-child { margin-bottom: 0; }
+
+    .detail-section h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 8px;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+    }
+
+    .detail-row .label { color: var(--muted); font-weight: 500; }
+
+    .detail-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .detail-list li {
+      font-size: 0.88rem;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+      border-left: 3px solid var(--border);
+    }
+
+    .detail-list li.farm { border-left-color: var(--success); }
+    .detail-list li.craft { border-left-color: var(--bow-seal); }
+    .detail-list li.tip { border-left-color: var(--accent); }
+    .detail-list li.warn { border-left-color: var(--danger); }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+    }
+
+    .progression-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 32px;
+      overflow-x: auto;
+    }
+
+    .progression-bar h2 {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .progression-track {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: max-content;
+      padding-bottom: 4px;
+    }
+
+    .progress-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      padding: 0 4px;
+      transition: transform 0.2s;
+    }
+
+    .progress-node:hover { transform: scale(1.05); }
+
+    .progress-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      transition: all 0.2s;
+    }
+
+    .progress-node.active .progress-dot,
+    .progress-node:hover .progress-dot {
+      background: var(--node-color, var(--accent));
+      border-color: var(--node-color, var(--accent));
+      box-shadow: 0 0 12px var(--node-color, var(--accent));
+    }
+
+    .progress-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      max-width: 56px;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .progress-line {
+      width: 24px;
+      height: 2px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 600px) {
+      .detail-row { grid-template-columns: 1fr; gap: 4px; }
+      .stage-card.dps-check::after { font-size: 0.6rem; top: 10px; right: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>勇者战流程 · 完整装备攻略</h1>
+      <p>
+        <a href="../index.html">← 返回导航</a>
+        · 龙前：<a href="https://www.mcmod.cn/post/6413.html" target="_blank" rel="noopener">3.13.8 攻略</a>
+        · 龙后：<a href="https://www.mcmod.cn/post/6423.html" target="_blank" rel="noopener">龙后篇</a>
+        · 点击卡片查看详情
+      </p>
+    </header>
+
+    <div class="legend">
+      <div class="legend-item"><span class="dot pot"></span>饕餮之锅 — 前期主武器</div>
+      <div class="legend-item"><span class="dot sword"></span>恐怖之剑 — 龙前末期</div>
+      <div class="legend-item"><span class="dot tyr"></span>堕天提尔锋 — 龙后中期</div>
+      <div class="legend-item"><span class="dot ult"></span>寰宇剑 — 终局</div>
+    </div>
+
+    <div class="progression-bar">
+      <h2>武器演进</h2>
+      <div class="progression-track" id="progressionTrack"></div>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" class="search-box" id="searchBox" placeholder="搜索 Boss、装备、饰品…" />
+      <div class="phase-tabs" id="phaseTabs">
+        <button type="button" class="phase-tab active" data-phase="all">全部</button>
+        <button type="button" class="phase-tab" data-phase="pre">龙前</button>
+        <button type="button" class="phase-tab" data-phase="post">龙后</button>
+      </div>
+      <div class="chapter-tabs" id="chapterTabs"></div>
+    </div>
+
+    <div class="flow-container" id="flowContainer"></div>
+
+    <footer>
+      数据来源：Emra · 配图来自
+      <a href="https://www.mcmod.cn/post/6413.html" target="_blank" rel="noopener">龙前</a> /
+      <a href="https://www.mcmod.cn/post/6423.html" target="_blank" rel="noopener">龙后</a>
+    </footer>
+  </div>
+
+  <script src="pre-dragon-data.js"></script>
+  <script src="post-dragon-data.js"></script>
+
+  <div class="image-lightbox" id="imageLightbox" aria-hidden="true">
+    <img id="lightboxImg" alt="增伤饰品配置大图" />
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle"></h2>
+          <div class="modal-chapter" id="modalChapter"></div>
+        </div>
+        <button class="modal-close" id="modalClose" aria-label="关闭">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+
+  <script>
+    const CHAPTER_COLORS = [
+      "#ef6b6b", "#f97316", "#f0b429", "#84cc16", "#22d3ee",
+      "#b07cff", "#06b6d4", "#a78bfa", "#ec4899", "#14b8a6"
+    ];
+
+    const WEAPON_PROGRESSION = [];
+    const IMG_BASE = "https://i.mcmod.cn/editor/upload";
+    const STAGE_IMAGES = {};
+    const IMAGE_CAPTIONS = {};
+    let DATA = [];
+
+    function getStageImages(stage) {
+      return STAGE_IMAGES[stage.id] || [];
+    }
+
+    function cleanAccessoryText(text) {
+      if (!text) return text;
+      return text.replace(/\s*·?\s*见原文第\d+图/g, "").replace(/见原文第\d+图\s*·?\s*/g, "").trim();
+    }
+
+    function renderAccessoryImages(images, stage, compact) {
+      if (!images.length) return "";
+      const captions = IMAGE_CAPTIONS[stage.id] || [];
+      if (compact) {
+        return `<div class="accessory-image-wrap" data-no-modal="true">
+          <img src="${images[0]}" alt="${stage.name} 饰品配置" loading="lazy" referrerpolicy="no-referrer" />
+          <div class="accessory-image-label">饰品配置 · 点击放大</div></div>`;
+      }
+      return `<div class="detail-section"><h3>饰品配置</h3><div class="detail-images">
+        ${images.map((url, i) => `<div class="detail-image-block" data-no-modal="true">
+          <img src="${url}" alt="${stage.name} 配图${images.length > 1 ? " " + (i+1) : ""}" loading="lazy" referrerpolicy="no-referrer" />
+          ${images.length > 1 ? `<div class="detail-image-caption">${captions[i] || "配图 " + (i+1)}</div>` : ""}
+        </div>`).join("")}
+      </div></div>`;
+    }
+
+    function openLightbox(src, alt) {
+      const lb = document.getElementById("imageLightbox");
+      document.getElementById("lightboxImg").src = src;
+      document.getElementById("lightboxImg").alt = alt || "饰品配置";
+      lb.classList.add("open");
+    }
+
+    function closeLightbox() {
+      document.getElementById("imageLightbox").classList.remove("open");
+      document.getElementById("lightboxImg").removeAttribute("src");
+      if (!document.getElementById("modalOverlay").classList.contains("open")) {
+        document.body.style.overflow = "";
+      }
+    }
+
+    function bindImageZoom(root) {
+      root.querySelectorAll(".accessory-image-wrap img, .detail-image-block img").forEach((img) => {
+        img.addEventListener("click", (e) => { e.stopPropagation(); openLightbox(img.src, img.alt); });
+      });
+    }
+
+    function mergePack(pack) {
+      if (!pack) return;
+      CHAPTER_COLORS.push(...(pack.extraColors || []));
+      WEAPON_PROGRESSION.push(...(pack.progression || []));
+      Object.assign(IMAGE_CAPTIONS, pack.imageCaptions || {});
+      Object.entries(pack.images || {}).forEach(([id, paths]) => {
+        STAGE_IMAGES[id] = paths.map((p) => p.startsWith("http") ? p : `${IMG_BASE}/${p}`);
+      });
+      DATA.push(...(pack.chapters || []));
+    }
+
+    function getChapterPhase(ch) {
+      return ch.phase || (ch.chapter < 10 ? "pre" : "post");
+    }
+
+    function getWeapon(stage) {
+      return stage.weapon || stage.bow || "—";
+    }
+
+    function renderProgression() {
+      const track = document.getElementById("progressionTrack");
+      WEAPON_PROGRESSION.forEach((item, i) => {
+        if (i > 0) {
+          const line = document.createElement("div");
+          line.className = "progression-line";
+          track.appendChild(line);
+        }
+        const node = document.createElement("div");
+        node.className = "progress-node";
+        node.style.setProperty("--node-color", CHAPTER_COLORS[item.chapter] || "#ef6b6b");
+        node.innerHTML = `<div class="progress-dot"></div><div class="progress-label">${item.name}</div>`;
+        node.addEventListener("click", () => {
+          document.querySelector(`[data-chapter="${item.chapter}"]`)?.scrollIntoView({ behavior: "smooth" });
+        });
+        track.appendChild(node);
+      });
+    }
+
+    function renderChapterTabs() {
+      const tabs = document.getElementById("chapterTabs");
+      const all = document.createElement("button");
+      all.className = "chapter-tab active";
+      all.textContent = "全部";
+      all.dataset.chapter = "all";
+      tabs.appendChild(all);
+      DATA.forEach((ch) => {
+        const btn = document.createElement("button");
+        btn.className = "chapter-tab";
+        btn.textContent = ch.title;
+        btn.dataset.chapter = ch.chapter;
+        tabs.appendChild(btn);
+      });
+      tabs.addEventListener("click", (e) => {
+        const tab = e.target.closest(".chapter-tab");
+        if (!tab) return;
+        tabs.querySelectorAll(".chapter-tab").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        filterStages();
+      });
+    }
+
+    function renderFlow() {
+      const container = document.getElementById("flowContainer");
+      DATA.forEach((ch) => {
+        const section = document.createElement("section");
+        section.className = "chapter-section" + (getChapterPhase(ch) === "post" ? " post-dragon" : "");
+        section.dataset.chapter = ch.chapter;
+        section.dataset.phase = getChapterPhase(ch);
+        section.style.setProperty("--chapter-color", CHAPTER_COLORS[ch.chapter]);
+        section.innerHTML = `<div class="chapter-header">
+          <div class="chapter-badge" style="background:${CHAPTER_COLORS[ch.chapter]}22;color:${CHAPTER_COLORS[ch.chapter]}">${ch.chapter}</div>
+          <div><div class="chapter-title">${ch.title} · ${ch.subtitle.split("·")[0].trim()}</div>
+          <div class="chapter-subtitle">${ch.subtitle}</div></div></div><div class="stage-grid"></div>`;
+        const grid = section.querySelector(".stage-grid");
+        ch.stages.forEach((stage) => {
+          const card = document.createElement("article");
+          card.className = "stage-card"
+            + (stage.prep ? " prep" : "")
+            + (stage.dpsCheck ? " dps-check" : "")
+            + (stage.finale ? " finale" : "")
+            + (stage.optional ? " prep" : "");
+          card.style.setProperty("--chapter-color", CHAPTER_COLORS[ch.chapter]);
+          card.dataset.search = [
+            stage.name, getWeapon(stage), stage.armor, stage.accessories,
+            stage.affixes, stage.gems, stage.enchants,
+            ...(stage.tips || []), ...(stage.farm || []), ...(stage.craft || []),
+          ].filter(Boolean).join(" ").toLowerCase();
+          const weapon = getWeapon(stage);
+          const enchants = stage.enchants || stage.bowEnchants;
+          const enchHtml = enchants ? `<br><small style="color:var(--muted)">${enchants}</small>` : "";
+          const images = getStageImages(stage);
+          const accessoryText = cleanAccessoryText(stage.accessories);
+          card.innerHTML = `<div class="stage-name">${stage.name}${stage.optional ? ' <small style="color:var(--muted)">(可选)</small>' : ""}</div>
+            <div class="equip-row">
+              <div class="equip-item"><span class="equip-label">武</span><span class="equip-value">${weapon}${enchHtml}</span></div>
+              ${stage.armor ? `<div class="equip-item"><span class="equip-label">甲</span><span class="equip-value">${stage.armor}</span></div>` : ""}
+              ${stage.affixes ? `<div class="equip-item"><span class="equip-label">词条</span><span class="equip-value">${stage.affixes}</span></div>` : ""}
+              ${stage.gems ? `<div class="equip-item"><span class="equip-label">宝石</span><span class="equip-value">${stage.gems}</span></div>` : ""}
+            </div>
+            ${accessoryText ? `<div class="accessories-preview">饰品：<span>${accessoryText}</span></div>` : ""}
+            ${renderAccessoryImages(images, stage, true)}
+            <div class="click-hint">点击查看详情 →</div>`;
+          bindImageZoom(card);
+          card.addEventListener("click", (e) => {
+            if (e.target.closest("[data-no-modal]")) return;
+            openModal(stage, ch);
+          });
+          grid.appendChild(card);
+        });
+        container.appendChild(section);
+      });
+    }
+
+    function openModal(stage, chapter) {
+      document.getElementById("modalTitle").textContent = stage.name;
+      document.getElementById("modalChapter").textContent = `${chapter.title} · ${chapter.subtitle}`;
+      const body = document.getElementById("modalBody");
+      let html = renderAccessoryImages(getStageImages(stage), stage, false);
+      const accessoryText = cleanAccessoryText(stage.accessories);
+      const enchants = stage.enchants || stage.bowEnchants;
+      html += `<div class="detail-section"><h3>核心装备</h3><div class="detail-grid">`;
+      html += `<div class="detail-row"><span class="label">武器</span><span>${getWeapon(stage)}${enchants ? " · " + enchants : ""}</span></div>`;
+      if (stage.armor) html += `<div class="detail-row"><span class="label">护甲</span><span>${stage.armor}</span></div>`;
+      if (accessoryText) html += `<div class="detail-row"><span class="label">饰品</span><span>${accessoryText}</span></div>`;
+      if (stage.affixes) html += `<div class="detail-row"><span class="label">词条</span><span>${stage.affixes}</span></div>`;
+      if (stage.gems) html += `<div class="detail-row"><span class="label">宝石</span><span>${stage.gems}</span></div>`;
+      const noteText = cleanAccessoryText(stage.accessoryNote);
+      if (noteText) html += `<div class="detail-row"><span class="label">备注</span><span>${noteText}</span></div>`;
+      html += `</div></div>`;
+      for (const [title, key, cls] of [["打法要点","tips","tip"],["注意事项","warn","warn"],["建议刷取","farm","farm"],["可制作","craft","craft"]]) {
+        if (stage[key]?.length) {
+          html += `<div class="detail-section"><h3>${title}</h3><ul class="detail-list">`;
+          stage[key].forEach((t) => { html += `<li class="${cls}">${t}</li>`; });
+          html += `</ul></div>`;
+        }
+      }
+      if (stage.dpsCheck) html += `<div class="tag-row"><span class="tag" style="border-color:#ef6b6b;color:#ef6b6b">DPS 检测点</span></div>`;
+      body.innerHTML = html;
+      bindImageZoom(body);
+      document.getElementById("modalOverlay").classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      document.getElementById("modalOverlay").classList.remove("open");
+      if (!document.getElementById("imageLightbox").classList.contains("open")) document.body.style.overflow = "";
+    }
+
+    function filterStages() {
+      const query = document.getElementById("searchBox").value.toLowerCase().trim();
+      const chapterFilter = document.querySelector(".chapter-tab.active")?.dataset.chapter || "all";
+      const phaseFilter = document.querySelector(".phase-tab.active")?.dataset.phase || "all";
+      document.querySelectorAll(".chapter-section").forEach((section) => {
+        let anyVisible = false;
+        const chapterMatch = chapterFilter === "all" || chapterFilter === section.dataset.chapter;
+        const phaseMatch = phaseFilter === "all" || phaseFilter === section.dataset.phase;
+        section.querySelectorAll(".stage-card").forEach((card) => {
+          const visible = chapterMatch && phaseMatch && (!query || card.dataset.search.includes(query));
+          card.style.display = visible ? "" : "none";
+          if (visible) anyVisible = true;
+        });
+        section.style.display = anyVisible ? "" : "none";
+      });
+    }
+
+    document.getElementById("searchBox").addEventListener("input", filterStages);
+    document.getElementById("phaseTabs").addEventListener("click", (e) => {
+      const tab = e.target.closest(".phase-tab");
+      if (!tab) return;
+      document.querySelectorAll(".phase-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      filterStages();
+    });
+    document.getElementById("modalClose").addEventListener("click", closeModal);
+    document.getElementById("modalOverlay").addEventListener("click", (e) => { if (e.target === e.currentTarget) closeModal(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (document.getElementById("imageLightbox").classList.contains("open")) closeLightbox();
+        else closeModal();
+      }
+    });
+    document.getElementById("imageLightbox").addEventListener("click", closeLightbox);
+
+    mergePack(window.MC_WARRIOR_PRE);
+    mergePack(window.MC_WARRIOR_POST);
+    renderProgression();
+    renderChapterTabs();
+    renderFlow();
+  </script>
+</body>
+</html>
