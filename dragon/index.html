@@ -1543,8 +1543,15 @@
           <div class="progress-label">${item.name}</div>
         `;
         node.addEventListener("click", () => {
-          const section = document.querySelector(`[data-chapter="${item.chapter}"]`);
-          section?.scrollIntoView({ behavior: "smooth" });
+          const section = document.querySelector(`.chapter-section[data-chapter="${item.chapter}"]`);
+          if (!section) return;
+          document.querySelectorAll(".phase-tab").forEach((t) => t.classList.remove("active"));
+          document.querySelector(".phase-tab[data-phase='all']")?.classList.add("active");
+          document.querySelectorAll(".chapter-tab").forEach((t) => t.classList.remove("active"));
+          document.querySelector(".chapter-tab[data-chapter='all']")?.classList.add("active");
+          document.getElementById("searchBox").value = "";
+          filterStages();
+          section.scrollIntoView({ behavior: "smooth" });
         });
         track.appendChild(node);
       });
